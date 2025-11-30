@@ -15,25 +15,43 @@ const Dashboard = () => {
   useEffect(() => {
     // Check authentication
     const checkAuth = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      
-      if (!session) {
-        navigate("/auth");
-        return;
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        
+        if (!session) {
+          navigate("/auth");
+          return;
+        }
+
+        setUser(session.user);
+
+        // Check if user has any role
+        const { data: existingRoles, error: roleCheckError } = await supabase
+          .from("user_roles")
+          .select("role")
+          .eq("user_id", session.user.id);
+
+        // If no role exists, create default user role
+        if (!roleCheckError && (!existingRoles || existingRoles.length === 0)) {
+          await supabase
+            .from("user_roles")
+            .insert({ user_id: session.user.id, role: "user" });
+        }
+
+        // Check if user is admin
+        const { data: adminRole } = await supabase
+          .from("user_roles")
+          .select("role")
+          .eq("user_id", session.user.id)
+          .eq("role", "admin")
+          .maybeSingle();
+
+        setIsAdmin(!!adminRole);
+      } catch (error) {
+        console.error("Error checking auth:", error);
+      } finally {
+        setLoading(false);
       }
-
-      setUser(session.user);
-
-      // Check if user is admin
-      const { data: roles } = await supabase
-        .from("user_roles")
-        .select("role")
-        .eq("user_id", session.user.id)
-        .eq("role", "admin")
-        .maybeSingle();
-
-      setIsAdmin(!!roles);
-      setLoading(false);
     };
 
     checkAuth();
