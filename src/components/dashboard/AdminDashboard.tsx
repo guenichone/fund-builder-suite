@@ -4,7 +4,6 @@ import DashboardLayout from "./DashboardLayout";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import FundsList from "@/components/funds/FundsList";
 import CreateFundForm from "@/components/funds/CreateFundForm";
-import UserPreferences from "./UserPreferences";
 import { Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
@@ -18,7 +17,7 @@ const AdminDashboard = ({ user }: AdminDashboardProps) => {
   const userName = user.user_metadata?.full_name || user.email?.split("@")[0];
 
   return (
-    <DashboardLayout userName={userName} role="admin">
+    <DashboardLayout userName={userName} role="admin" userId={user.id}>
       <div className="space-y-6">
         <div className="flex items-center justify-between">
           <div>
@@ -46,7 +45,6 @@ const AdminDashboard = ({ user }: AdminDashboardProps) => {
             <TabsTrigger value="all">All Funds</TabsTrigger>
             <TabsTrigger value="active">Active</TabsTrigger>
             <TabsTrigger value="inactive">Inactive</TabsTrigger>
-            <TabsTrigger value="preferences">Preferences</TabsTrigger>
           </TabsList>
 
           <TabsContent value="all" className="mt-6">
@@ -59,10 +57,6 @@ const AdminDashboard = ({ user }: AdminDashboardProps) => {
 
           <TabsContent value="inactive" className="mt-6">
             <FundsList filter="inactive" isAdmin={true} />
-          </TabsContent>
-
-          <TabsContent value="preferences" className="mt-6">
-            <UserPreferences userId={user.id} currentRole="admin" onRoleChange={() => {}} />
           </TabsContent>
         </Tabs>
       </div>
