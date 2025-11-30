@@ -26,9 +26,8 @@ export function AppSidebar({ role }: AppSidebarProps) {
   ];
 
   const userItems = [
-    { title: "Dashboard", url: "/dashboard", icon: LayoutDashboard },
-    { title: "Available Funds", url: "/dashboard", icon: TrendingUp },
-    { title: "My Portfolio", url: "/dashboard", icon: PieChart },
+    { title: "My Portfolio", url: "/portfolio", icon: PieChart },
+    { title: "Available Funds", url: "/funds", icon: TrendingUp },
   ];
 
   const items = role === "admin" ? adminItems : userItems;
