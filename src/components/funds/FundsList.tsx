@@ -115,8 +115,8 @@ const FundsList = ({ filter, isAdmin, userId }: FundsListProps) => {
           <CardContent className="flex flex-col flex-grow">
             {/* Info Section */}
             <div className="space-y-4 flex flex-col flex-grow">
-              <div className="flex items-center gap-3">
-                <Shield className="w-5 h-5 text-muted-foreground shrink-0" />
+              <div className="flex items-start gap-3">
+                <Shield className="w-5 h-5 text-muted-foreground shrink-0 mt-0.5" />
                 <div className="flex-1 min-w-0">
                   <p className="text-xs text-muted-foreground mb-1">Risk Level</p>
                   <Badge variant="outline" className={getRiskColor(fund.risk_level)}>
@@ -126,8 +126,8 @@ const FundsList = ({ filter, isAdmin, userId }: FundsListProps) => {
               </div>
               
               {/* Flexible section that adjusts card height */}
-              <div className="flex items-center gap-3">
-                <Target className="w-5 h-5 text-muted-foreground shrink-0" />
+              <div className="flex items-start gap-3 flex-grow">
+                <Target className="w-5 h-5 text-muted-foreground shrink-0 mt-0.5" />
                 <div className="flex-1 min-w-0">
                   <p className="text-xs text-muted-foreground mb-1">Target Market</p>
                   <p className="text-sm font-medium leading-snug">{fund.target_market}</p>
@@ -135,8 +135,8 @@ const FundsList = ({ filter, isAdmin, userId }: FundsListProps) => {
               </div>
               
               {/* Fixed position - always at bottom of info section */}
-              <div className="flex items-center gap-3 mt-auto pt-2">
-                <DollarSign className="w-5 h-5 text-muted-foreground shrink-0" />
+              <div className="flex items-start gap-3 mt-auto pt-2">
+                <DollarSign className="w-5 h-5 text-muted-foreground shrink-0 mt-0.5" />
                 <div className="flex-1 min-w-0">
                   <p className="text-xs text-muted-foreground mb-1">Share Price</p>
                   <p className="text-xl font-bold text-primary">
