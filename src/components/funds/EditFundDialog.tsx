@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import { Settings, Trash2 } from "lucide-react";
 import {
@@ -22,6 +23,8 @@ interface Fund {
   id: string;
   name: string;
   is_active: boolean;
+  share_price: number;
+  redemption_price: number | null;
 }
 
 interface EditFundDialogProps {
@@ -34,6 +37,9 @@ const EditFundDialog = ({ fund, onUpdate }: EditFundDialogProps) => {
   const [open, setOpen] = useState(false);
   const [isActive, setIsActive] = useState(fund.is_active);
   const [loading, setLoading] = useState(false);
+  const [redemptionPrice, setRedemptionPrice] = useState(
+    fund.redemption_price?.toString() || fund.share_price.toString()
+  );
 
   const handleToggleActive = async () => {
     setLoading(true);
@@ -49,6 +55,37 @@ const EditFundDialog = ({ fund, onUpdate }: EditFundDialogProps) => {
       toast({
         title: "Success",
         description: `Fund ${!isActive ? "activated" : "deactivated"} successfully.`,
+      });
+      onUpdate();
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleUpdateRedemptionPrice = async () => {
+    setLoading(true);
+    try {
+      const price = parseFloat(redemptionPrice);
+      if (isNaN(price) || price <= 0) {
+        throw new Error("Please enter a valid price");
+      }
+
+      const { error } = await supabase
+        .from("funds")
+        .update({ redemption_price: price })
+        .eq("id", fund.id);
+
+      if (error) throw error;
+
+      toast({
+        title: "Success",
+        description: "Redemption price updated successfully.",
       });
       onUpdate();
     } catch (error: any) {
@@ -108,6 +145,28 @@ const EditFundDialog = ({ fund, onUpdate }: EditFundDialogProps) => {
               </p>
             </div>
             <Switch checked={isActive} onCheckedChange={handleToggleActive} disabled={loading} />
+          </div>
+
+          <div className="space-y-4 pt-4 border-t">
+            <div className="space-y-2">
+              <Label htmlFor="redemption-price">Redemption Price ($)</Label>
+              <p className="text-xs text-muted-foreground mb-2">
+                Current purchase price: ${fund.share_price.toFixed(2)}
+              </p>
+              <div className="flex gap-2">
+                <Input
+                  id="redemption-price"
+                  type="number"
+                  step="0.01"
+                  value={redemptionPrice}
+                  onChange={(e) => setRedemptionPrice(e.target.value)}
+                  disabled={loading}
+                />
+                <Button onClick={handleUpdateRedemptionPrice} disabled={loading} variant="secondary">
+                  Update
+                </Button>
+              </div>
+            </div>
           </div>
 
           <div className="pt-4 border-t">

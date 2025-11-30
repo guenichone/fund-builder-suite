@@ -5,6 +5,7 @@ import { Loader2, TrendingUp, PieChart, BarChart3 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import PortfolioChart from "./PortfolioChart";
 import ExposureChart from "./ExposureChart";
+import SellSharesDialog from "./SellSharesDialog";
 
 interface Investment {
   id: string;
@@ -15,6 +16,7 @@ interface Investment {
     id: string;
     name: string;
     share_price: number;
+    redemption_price: number | null;
   };
 }
 
@@ -30,53 +32,54 @@ const Portfolio = ({ userId }: PortfolioProps) => {
   const [totalInvested, setTotalInvested] = useState(0);
 
   useEffect(() => {
-    const loadPortfolio = async () => {
-      setLoading(true);
-      try {
-        const { data, error } = await supabase
-          .from("investments")
-          .select(
-            `
-            id,
-            shares_quantity,
-            total_amount,
-            purchase_date,
-            fund:funds (
-              id,
-              name,
-              share_price
-            )
-          `
-          )
-          .eq("user_id", userId)
-          .order("purchase_date", { ascending: false });
-
-        if (error) throw error;
-
-        const typedData = data as unknown as Investment[];
-        setInvestments(typedData);
-
-        const invested = typedData.reduce((sum, inv) => sum + Number(inv.total_amount), 0);
-        const current = typedData.reduce(
-          (sum, inv) => sum + Number(inv.shares_quantity) * Number(inv.fund.share_price),
-          0
-        );
-
-        setTotalInvested(invested);
-        setTotalValue(current);
-      } catch (error: any) {
-        toast({
-          title: "Error loading portfolio",
-          description: error.message,
-          variant: "destructive",
-        });
-      } finally {
-        setLoading(false);
-      }
-    };
-
     loadPortfolio();
   }, [userId]);
+
+  const loadPortfolio = async () => {
+    setLoading(true);
+    try {
+      const { data, error } = await supabase
+        .from("investments")
+        .select(
+          `
+          id,
+          shares_quantity,
+          total_amount,
+          purchase_date,
+          fund:funds (
+            id,
+            name,
+            share_price,
+            redemption_price
+          )
+        `
+        )
+        .eq("user_id", userId)
+        .order("purchase_date", { ascending: false });
+
+      if (error) throw error;
+
+      const typedData = data as unknown as Investment[];
+      setInvestments(typedData);
+
+      const invested = typedData.reduce((sum, inv) => sum + Number(inv.total_amount), 0);
+      const current = typedData.reduce(
+        (sum, inv) => sum + Number(inv.shares_quantity) * Number(inv.fund.share_price),
+        0
+      );
+
+      setTotalInvested(invested);
+      setTotalValue(current);
+    } catch (error: any) {
+      toast({
+        title: "Error loading portfolio",
+        description: error.message,
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
 
   if (loading) {
     return (
@@ -167,24 +170,34 @@ const Portfolio = ({ userId }: PortfolioProps) => {
               const currentValue = Number(investment.shares_quantity) * Number(investment.fund.share_price);
               const invested = Number(investment.total_amount);
               const profit = currentValue - invested;
+              const redemptionPrice = investment.fund.redemption_price || investment.fund.share_price;
 
               return (
                 <div
                   key={investment.id}
-                  className="flex items-center justify-between p-4 border rounded-lg hover:bg-secondary/50 transition-colors"
+                  className="flex items-center justify-between gap-4 p-4 border rounded-lg hover:bg-secondary/50 transition-colors"
                 >
-                  <div className="flex-1">
+                  <div className="flex-1 min-w-0">
                     <h4 className="font-medium">{investment.fund.name}</h4>
                     <p className="text-sm text-muted-foreground">
                       {Number(investment.shares_quantity).toFixed(4)} shares • Purchased{" "}
                       {new Date(investment.purchase_date).toLocaleDateString()}
                     </p>
                   </div>
-                  <div className="text-right">
+                  <div className="text-right shrink-0">
                     <p className="font-bold">${currentValue.toFixed(2)}</p>
                     <p className={`text-sm ${profit >= 0 ? "text-success" : "text-destructive"}`}>
                       {profit >= 0 ? "+" : ""}${profit.toFixed(2)}
                     </p>
+                  </div>
+                  <div className="shrink-0">
+                    <SellSharesDialog
+                      investmentId={investment.id}
+                      fundName={investment.fund.name}
+                      sharesOwned={Number(investment.shares_quantity)}
+                      redemptionPrice={redemptionPrice}
+                      onSuccess={loadPortfolio}
+                    />
                   </div>
                 </div>
               );

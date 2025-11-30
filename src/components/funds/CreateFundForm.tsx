@@ -40,6 +40,7 @@ const CreateFundForm = ({ onSuccess, userId }: CreateFundFormProps) => {
     risk_level: "moderate",
     target_market: "",
     share_price: "100.00",
+    redemption_price: "95.00",
   });
 
   const [selectedCurrencies, setSelectedCurrencies] = useState<string[]>([]);
@@ -71,6 +72,7 @@ const CreateFundForm = ({ onSuccess, userId }: CreateFundFormProps) => {
           risk_level: formData.risk_level as "low" | "moderate" | "high" | "very_high",
           target_market: formData.target_market,
           share_price: parseFloat(formData.share_price),
+          redemption_price: parseFloat(formData.redemption_price),
           created_by: userId,
         })
         .select()
@@ -140,32 +142,53 @@ const CreateFundForm = ({ onSuccess, userId }: CreateFundFormProps) => {
         />
       </div>
 
+      <div className="space-y-2">
+        <Label htmlFor="risk">Risk Level</Label>
+        <Select value={formData.risk_level} onValueChange={(v) => setFormData({ ...formData, risk_level: v })}>
+          <SelectTrigger id="risk">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="low">Low</SelectItem>
+            <SelectItem value="moderate">Moderate</SelectItem>
+            <SelectItem value="high">High</SelectItem>
+            <SelectItem value="very_high">Very High</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+
       <div className="grid grid-cols-2 gap-4">
         <div className="space-y-2">
-          <Label htmlFor="risk">Risk Level</Label>
-          <Select value={formData.risk_level} onValueChange={(v) => setFormData({ ...formData, risk_level: v })}>
-            <SelectTrigger id="risk">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="low">Low</SelectItem>
-              <SelectItem value="moderate">Moderate</SelectItem>
-              <SelectItem value="high">High</SelectItem>
-              <SelectItem value="very_high">Very High</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-
-        <div className="space-y-2">
-          <Label htmlFor="price">Share Price ($)</Label>
+          <Label htmlFor="price">Purchase Price ($)</Label>
           <Input
             id="price"
             type="number"
             step="0.01"
             value={formData.share_price}
-            onChange={(e) => setFormData({ ...formData, share_price: e.target.value })}
+            onChange={(e) => {
+              const price = e.target.value;
+              setFormData({ 
+                ...formData, 
+                share_price: price,
+                redemption_price: (parseFloat(price) * 0.95).toFixed(2) // Default -5%
+              });
+            }}
             required
           />
+          <p className="text-xs text-muted-foreground">Price at which users buy shares</p>
+        </div>
+
+        <div className="space-y-2">
+          <Label htmlFor="redemption">Redemption Price ($)</Label>
+          <Input
+            id="redemption"
+            type="number"
+            step="0.01"
+            value={formData.redemption_price}
+            onChange={(e) => setFormData({ ...formData, redemption_price: e.target.value })}
+            required
+          />
+          <p className="text-xs text-muted-foreground">Price at which users sell back shares</p>
         </div>
       </div>
 

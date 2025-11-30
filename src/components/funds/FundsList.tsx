@@ -15,6 +15,7 @@ interface Fund {
   risk_level: string;
   target_market: string;
   share_price: number;
+  redemption_price: number | null;
   is_active: boolean;
   created_at: string;
 }

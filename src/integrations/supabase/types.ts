@@ -142,6 +142,7 @@ export type Database = {
           investment_strategy: string
           is_active: boolean
           name: string
+          redemption_price: number | null
           risk_level: Database["public"]["Enums"]["risk_level"]
           share_price: number
           target_market: string
@@ -154,6 +155,7 @@ export type Database = {
           investment_strategy: string
           is_active?: boolean
           name: string
+          redemption_price?: number | null
           risk_level: Database["public"]["Enums"]["risk_level"]
           share_price?: number
           target_market: string
@@ -166,6 +168,7 @@ export type Database = {
           investment_strategy?: string
           is_active?: boolean
           name?: string
+          redemption_price?: number | null
           risk_level?: Database["public"]["Enums"]["risk_level"]
           share_price?: number
           target_market?: string
