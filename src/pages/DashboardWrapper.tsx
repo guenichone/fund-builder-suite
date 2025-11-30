@@ -40,9 +40,19 @@ const DashboardWrapper = () => {
         setUser(session.user);
         await fetchUserRole(session.user.id);
         
-        // Redirect to portfolio if on root
+        // Redirect based on role
         if (window.location.pathname === "/") {
-          navigate("/portfolio");
+          const { data } = await supabase
+            .from("user_roles")
+            .select("role")
+            .eq("user_id", session.user.id)
+            .maybeSingle();
+          
+          if (data?.role === "admin") {
+            navigate("/dashboard");
+          } else {
+            navigate("/portfolio");
+          }
         }
       } catch (error) {
         console.error("Error initializing auth:", error);
