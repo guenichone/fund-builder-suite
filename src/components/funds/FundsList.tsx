@@ -113,8 +113,8 @@ const FundsList = ({ filter, isAdmin, userId }: FundsListProps) => {
           </CardHeader>
           
           <CardContent className="flex flex-col flex-grow">
-            {/* Info Section - Takes available space */}
-            <div className="space-y-3 flex-grow">
+            {/* Info Section */}
+            <div className="space-y-3 flex flex-col flex-grow">
               <div className="flex items-start gap-3">
                 <Shield className="w-5 h-5 text-muted-foreground shrink-0 mt-0.5" />
                 <div className="flex-1 min-w-0">
@@ -125,7 +125,8 @@ const FundsList = ({ filter, isAdmin, userId }: FundsListProps) => {
                 </div>
               </div>
               
-              <div className="flex items-start gap-3">
+              {/* Flexible section that adjusts card height */}
+              <div className="flex items-start gap-3 flex-grow">
                 <Target className="w-5 h-5 text-muted-foreground shrink-0 mt-0.5" />
                 <div className="flex-1 min-w-0">
                   <p className="text-xs text-muted-foreground mb-1">Target Market</p>
@@ -133,7 +134,8 @@ const FundsList = ({ filter, isAdmin, userId }: FundsListProps) => {
                 </div>
               </div>
               
-              <div className="flex items-start gap-3">
+              {/* Fixed position - always at bottom of info section */}
+              <div className="flex items-start gap-3 mt-auto">
                 <DollarSign className="w-5 h-5 text-muted-foreground shrink-0 mt-0.5" />
                 <div className="flex-1 min-w-0">
                   <p className="text-xs text-muted-foreground mb-1">Share Price</p>
