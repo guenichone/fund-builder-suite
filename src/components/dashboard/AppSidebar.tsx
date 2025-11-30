@@ -1,4 +1,4 @@
-import { LayoutDashboard, Briefcase, PieChart, Settings, TrendingUp } from "lucide-react";
+import { LayoutDashboard, Briefcase, PieChart, TrendingUp } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 
 import {
@@ -23,7 +23,6 @@ export function AppSidebar({ role }: AppSidebarProps) {
   const adminItems = [
     { title: "Dashboard", url: "/dashboard", icon: LayoutDashboard },
     { title: "Manage Funds", url: "/dashboard", icon: Briefcase },
-    { title: "Settings", url: "/dashboard", icon: Settings },
   ];
 
   const userItems = [
