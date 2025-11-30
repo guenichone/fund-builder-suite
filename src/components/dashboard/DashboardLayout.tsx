@@ -14,9 +14,10 @@ interface DashboardLayoutProps {
   userName?: string;
   role: "admin" | "user";
   userId: string;
+  pageTitle?: string;
 }
 
-const DashboardLayout = ({ children, userName, role, userId }: DashboardLayoutProps) => {
+const DashboardLayout = ({ children, userName, role, userId, pageTitle = "Dashboard" }: DashboardLayoutProps) => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [preferencesOpen, setPreferencesOpen] = useState(false);
@@ -42,7 +43,7 @@ const DashboardLayout = ({ children, userName, role, userId }: DashboardLayoutPr
                 <SidebarTrigger className="text-foreground">
                   <Menu className="h-5 w-5" />
                 </SidebarTrigger>
-                <h1 className="text-xl font-bold text-foreground hidden sm:block">Dashboard</h1>
+                <h1 className="text-xl font-bold text-foreground hidden sm:block">{pageTitle}</h1>
               </div>
               <div className="flex items-center gap-4">
                 {userName && (
