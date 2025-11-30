@@ -97,48 +97,61 @@ const FundsList = ({ filter, isAdmin, userId }: FundsListProps) => {
   return (
     <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
       {funds.map((fund) => (
-        <Card key={fund.id} className="hover:shadow-lg transition-shadow">
+        <Card key={fund.id} className="hover:shadow-lg transition-shadow flex flex-col h-full">
           <CardHeader>
-            <div className="flex items-start justify-between">
-              <div className="flex-1">
+            <div className="flex items-start justify-between gap-2">
+              <div className="flex-1 min-w-0">
                 <CardTitle className="text-xl mb-2">{fund.name}</CardTitle>
                 <CardDescription className="line-clamp-2">{fund.investment_strategy}</CardDescription>
               </div>
               {!fund.is_active && (
-                <Badge variant="secondary" className="ml-2">
+                <Badge variant="secondary" className="shrink-0">
                   Inactive
                 </Badge>
               )}
             </div>
           </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="space-y-2">
-              <div className="flex items-center gap-2 text-sm">
-                <Shield className="w-4 h-4 text-muted-foreground" />
-                <span className="text-muted-foreground">Risk Level:</span>
-                <Badge variant="outline" className={getRiskColor(fund.risk_level)}>
-                  {fund.risk_level.replace("_", " ")}
-                </Badge>
+          
+          <CardContent className="flex flex-col flex-grow">
+            {/* Info Section - Takes available space */}
+            <div className="space-y-3 flex-grow">
+              <div className="flex items-start gap-3">
+                <Shield className="w-5 h-5 text-muted-foreground shrink-0 mt-0.5" />
+                <div className="flex-1 min-w-0">
+                  <p className="text-xs text-muted-foreground mb-1">Risk Level</p>
+                  <Badge variant="outline" className={getRiskColor(fund.risk_level)}>
+                    {fund.risk_level.replace("_", " ")}
+                  </Badge>
+                </div>
               </div>
-              <div className="flex items-center gap-2 text-sm">
-                <Target className="w-4 h-4 text-muted-foreground" />
-                <span className="text-muted-foreground">Market:</span>
-                <span className="font-medium">{fund.target_market}</span>
+              
+              <div className="flex items-start gap-3">
+                <Target className="w-5 h-5 text-muted-foreground shrink-0 mt-0.5" />
+                <div className="flex-1 min-w-0">
+                  <p className="text-xs text-muted-foreground mb-1">Target Market</p>
+                  <p className="text-sm font-medium leading-snug">{fund.target_market}</p>
+                </div>
               </div>
-              <div className="flex items-center gap-2 text-sm">
-                <DollarSign className="w-4 h-4 text-muted-foreground" />
-                <span className="text-muted-foreground">Share Price:</span>
-                <span className="font-bold text-lg text-foreground">
-                  ${Number(fund.share_price).toFixed(2)}
-                </span>
+              
+              <div className="flex items-start gap-3">
+                <DollarSign className="w-5 h-5 text-muted-foreground shrink-0 mt-0.5" />
+                <div className="flex-1 min-w-0">
+                  <p className="text-xs text-muted-foreground mb-1">Share Price</p>
+                  <p className="text-xl font-bold text-primary">
+                    ${Number(fund.share_price).toFixed(2)}
+                  </p>
+                </div>
               </div>
             </div>
 
-            {!isAdmin && userId && fund.is_active && (
-              <InvestmentDialog fundId={fund.id} fundName={fund.name} sharePrice={fund.share_price} userId={userId} />
-            )}
+            {/* Action Section - Sticky to bottom */}
+            <div className="mt-4 pt-4 border-t border-border">
+              {!isAdmin && userId && fund.is_active && (
+                <InvestmentDialog fundId={fund.id} fundName={fund.name} sharePrice={fund.share_price} userId={userId} />
+              )}
 
-            {isAdmin && <EditFundDialog fund={fund} onUpdate={loadFunds} />}
+              {isAdmin && <EditFundDialog fund={fund} onUpdate={loadFunds} />}
+            </div>
           </CardContent>
         </Card>
       ))}
