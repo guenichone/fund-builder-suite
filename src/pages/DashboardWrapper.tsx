@@ -9,7 +9,22 @@ import { useState } from "react";
 const DashboardWrapper = () => {
   const navigate = useNavigate();
   const [user, setUser] = useState<User | null>(null);
+  const [role, setRole] = useState<"admin" | "user">("user");
   const [loading, setLoading] = useState(true);
+
+  const fetchUserRole = async (userId: string) => {
+    const { data, error } = await supabase
+      .from("user_roles")
+      .select("role")
+      .eq("user_id", userId)
+      .maybeSingle();
+
+    if (!error && data) {
+      setRole(data.role as "admin" | "user");
+    } else {
+      setRole("user");
+    }
+  };
 
   useEffect(() => {
     const initAuth = async () => {
@@ -23,6 +38,7 @@ const DashboardWrapper = () => {
         }
 
         setUser(session.user);
+        await fetchUserRole(session.user.id);
         
         // Redirect to portfolio if on root
         if (window.location.pathname === "/") {
@@ -42,6 +58,9 @@ const DashboardWrapper = () => {
         return;
       }
       setUser(session.user);
+      setTimeout(() => {
+        fetchUserRole(session.user.id);
+      }, 0);
     });
 
     initAuth();
@@ -66,7 +85,7 @@ const DashboardWrapper = () => {
   const userName = user.user_metadata?.full_name || user.email?.split("@")[0];
 
   return (
-    <DashboardLayout userName={userName} role="user" userId={user.id}>
+    <DashboardLayout userName={userName} role={role} userId={user.id}>
       <Outlet />
     </DashboardLayout>
   );
