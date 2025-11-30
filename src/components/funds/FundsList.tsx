@@ -7,6 +7,7 @@ import { Loader2, TrendingUp, Shield, Target, DollarSign } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import InvestmentDialog from "./InvestmentDialog";
 import EditFundDialog from "./EditFundDialog";
+import SellSharesDialog from "../portfolio/SellSharesDialog";
 
 interface Fund {
   id: string;
@@ -20,13 +21,21 @@ interface Fund {
   created_at: string;
 }
 
+interface UserInvestment {
+  fund_id: string;
+  total_shares: number;
+  investment_id: string;
+}
+
 interface FundsListProps {
   filter: "all" | "active" | "inactive";
   isAdmin: boolean;
   userId?: string;
+  userInvestments?: UserInvestment[];
+  onInvestmentChange?: () => void;
 }
 
-const FundsList = ({ filter, isAdmin, userId }: FundsListProps) => {
+const FundsList = ({ filter, isAdmin, userId, userInvestments = [], onInvestmentChange }: FundsListProps) => {
   const [funds, setFunds] = useState<Fund[]>([]);
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
@@ -149,9 +158,31 @@ const FundsList = ({ filter, isAdmin, userId }: FundsListProps) => {
 
             {/* Action Section - Sticky to bottom */}
             <div className="mt-4 pt-4 border-t border-border">
-              {!isAdmin && userId && fund.is_active && (
-                <InvestmentDialog fundId={fund.id} fundName={fund.name} sharePrice={fund.share_price} userId={userId} />
-              )}
+              {!isAdmin && userId && fund.is_active && (() => {
+                const userInvestment = userInvestments.find(inv => inv.fund_id === fund.id);
+                const hasShares = userInvestment && userInvestment.total_shares > 0;
+                
+                return (
+                  <div className="flex gap-2">
+                    <div className="flex-1">
+                      <InvestmentDialog fundId={fund.id} fundName={fund.name} sharePrice={fund.share_price} userId={userId} />
+                    </div>
+                    {hasShares && fund.redemption_price && (
+                      <div className="flex-1">
+                        <SellSharesDialog
+                          investmentId={userInvestment.investment_id}
+                          fundName={fund.name}
+                          sharesOwned={userInvestment.total_shares}
+                          redemptionPrice={fund.redemption_price}
+                          onSuccess={() => {
+                            if (onInvestmentChange) onInvestmentChange();
+                          }}
+                        />
+                      </div>
+                    )}
+                  </div>
+                );
+              })()}
 
               {isAdmin && <EditFundDialog fund={fund} onUpdate={loadFunds} />}
             </div>
