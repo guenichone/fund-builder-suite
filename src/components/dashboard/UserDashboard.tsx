@@ -3,6 +3,7 @@ import DashboardLayout from "./DashboardLayout";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import FundsList from "@/components/funds/FundsList";
 import Portfolio from "@/components/portfolio/Portfolio";
+import UserPreferences from "./UserPreferences";
 
 interface UserDashboardProps {
   user: User;
@@ -23,6 +24,7 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
           <TabsList>
             <TabsTrigger value="portfolio">My Portfolio</TabsTrigger>
             <TabsTrigger value="funds">Available Funds</TabsTrigger>
+            <TabsTrigger value="preferences">Preferences</TabsTrigger>
           </TabsList>
 
           <TabsContent value="portfolio" className="mt-6">
@@ -31,6 +33,10 @@ const UserDashboard = ({ user }: UserDashboardProps) => {
 
           <TabsContent value="funds" className="mt-6">
             <FundsList filter="active" isAdmin={false} userId={user.id} />
+          </TabsContent>
+
+          <TabsContent value="preferences" className="mt-6">
+            <UserPreferences userId={user.id} currentRole="user" onRoleChange={() => {}} />
           </TabsContent>
         </Tabs>
       </div>
