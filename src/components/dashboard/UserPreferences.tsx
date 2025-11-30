@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
@@ -57,35 +56,29 @@ const UserPreferences = ({ userId, currentRole, onRoleChange }: UserPreferencesP
   };
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Account Role</CardTitle>
-        <CardDescription>Manage your account permissions</CardDescription>
-      </CardHeader>
-      <CardContent className="space-y-4">
-        <Alert variant="destructive">
-          <AlertTriangle className="h-4 w-4" />
-          <AlertDescription>
-            <strong>Security Warning:</strong> Self-assigning admin roles should not be enabled in production environments. This feature is for development/testing only.
-          </AlertDescription>
-        </Alert>
+    <div className="space-y-4">
+      <Alert variant="destructive">
+        <AlertTriangle className="h-4 w-4" />
+        <AlertDescription>
+          <strong>Security Warning:</strong> Self-assigning admin roles should not be enabled in production environments. This feature is for development/testing only.
+        </AlertDescription>
+      </Alert>
 
-        <div className="flex items-center justify-between space-x-2">
-          <div className="space-y-0.5">
-            <Label htmlFor="admin-mode">Fund Manager (Admin)</Label>
-            <p className="text-sm text-muted-foreground">
-              Enable admin access to create and manage funds
-            </p>
-          </div>
-          <Switch
-            id="admin-mode"
-            checked={isAdmin}
-            onCheckedChange={handleRoleToggle}
-            disabled={loading}
-          />
+      <div className="flex items-center justify-between space-x-2">
+        <div className="space-y-0.5">
+          <Label htmlFor="admin-mode">Fund Manager (Admin)</Label>
+          <p className="text-sm text-muted-foreground">
+            Enable admin access to create and manage funds
+          </p>
         </div>
-      </CardContent>
-    </Card>
+        <Switch
+          id="admin-mode"
+          checked={isAdmin}
+          onCheckedChange={handleRoleToggle}
+          disabled={loading}
+        />
+      </div>
+    </div>
   );
 };
 
