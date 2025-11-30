@@ -5,7 +5,6 @@ import { Loader2, TrendingUp, PieChart, BarChart3 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import PortfolioChart from "./PortfolioChart";
 import ExposureChart from "./ExposureChart";
-import SellSharesDialog from "./SellSharesDialog";
 
 interface Investment {
   id: string;
@@ -170,34 +169,24 @@ const Portfolio = ({ userId }: PortfolioProps) => {
               const currentValue = Number(investment.shares_quantity) * Number(investment.fund.share_price);
               const invested = Number(investment.total_amount);
               const profit = currentValue - invested;
-              const redemptionPrice = investment.fund.redemption_price || investment.fund.share_price;
 
               return (
                 <div
                   key={investment.id}
-                  className="flex items-center justify-between gap-4 p-4 border rounded-lg hover:bg-secondary/50 transition-colors"
+                  className="flex items-center justify-between p-4 border rounded-lg hover:bg-secondary/50 transition-colors"
                 >
-                  <div className="flex-1 min-w-0">
+                  <div className="flex-1">
                     <h4 className="font-medium">{investment.fund.name}</h4>
                     <p className="text-sm text-muted-foreground">
                       {Number(investment.shares_quantity).toFixed(4)} shares • Purchased{" "}
                       {new Date(investment.purchase_date).toLocaleDateString()}
                     </p>
                   </div>
-                  <div className="text-right shrink-0">
+                  <div className="text-right">
                     <p className="font-bold">${currentValue.toFixed(2)}</p>
                     <p className={`text-sm ${profit >= 0 ? "text-success" : "text-destructive"}`}>
                       {profit >= 0 ? "+" : ""}${profit.toFixed(2)}
                     </p>
-                  </div>
-                  <div className="shrink-0">
-                    <SellSharesDialog
-                      investmentId={investment.id}
-                      fundName={investment.fund.name}
-                      sharesOwned={Number(investment.shares_quantity)}
-                      redemptionPrice={redemptionPrice}
-                      onSuccess={loadPortfolio}
-                    />
                   </div>
                 </div>
               );
