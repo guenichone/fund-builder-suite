@@ -3,6 +3,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
 import { Loader2, TrendingUp, Shield, Target, DollarSign } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import InvestmentDialog from "./InvestmentDialog";
@@ -38,6 +40,7 @@ interface FundsListProps {
 const FundsList = ({ filter, isAdmin, userId, userInvestments = [], onInvestmentChange }: FundsListProps) => {
   const [funds, setFunds] = useState<Fund[]>([]);
   const [loading, setLoading] = useState(true);
+  const [togglingFund, setTogglingFund] = useState<string | null>(null);
   const { toast } = useToast();
 
   const loadFunds = async () => {
@@ -69,6 +72,33 @@ const FundsList = ({ filter, isAdmin, userId, userInvestments = [], onInvestment
   useEffect(() => {
     loadFunds();
   }, [filter]);
+
+  const handleToggleActive = async (fundId: string, currentStatus: boolean) => {
+    setTogglingFund(fundId);
+    try {
+      const { error } = await supabase
+        .from("funds")
+        .update({ is_active: !currentStatus })
+        .eq("id", fundId);
+
+      if (error) throw error;
+
+      toast({
+        title: "Success",
+        description: `Fund ${!currentStatus ? "activated" : "deactivated"} successfully.`,
+      });
+      
+      loadFunds();
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive",
+      });
+    } finally {
+      setTogglingFund(null);
+    }
+  };
 
   const getRiskColor = (risk: string) => {
     switch (risk) {
@@ -157,7 +187,21 @@ const FundsList = ({ filter, isAdmin, userId, userInvestments = [], onInvestment
             </div>
 
             {/* Action Section - Sticky to bottom */}
-            <div className="mt-4 pt-4 border-t border-border">
+            <div className="mt-4 pt-4 border-t border-border space-y-3">
+              {isAdmin && (
+                <div className="flex items-center justify-between gap-2 pb-2">
+                  <Label htmlFor={`active-${fund.id}`} className="text-sm font-medium cursor-pointer">
+                    {fund.is_active ? "Active" : "Inactive"}
+                  </Label>
+                  <Switch
+                    id={`active-${fund.id}`}
+                    checked={fund.is_active}
+                    onCheckedChange={() => handleToggleActive(fund.id, fund.is_active)}
+                    disabled={togglingFund === fund.id}
+                  />
+                </div>
+              )}
+              
               {!isAdmin && userId && fund.is_active && (() => {
                 const userInvestment = userInvestments.find(inv => inv.fund_id === fund.id);
                 const hasShares = userInvestment && userInvestment.total_shares > 0;
