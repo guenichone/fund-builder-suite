@@ -13,72 +13,75 @@ const Dashboard = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Check authentication
-    const checkAuth = async () => {
+    const refreshRole = async (userId: string) => {
       try {
-        const { data: { session } } = await supabase.auth.getSession();
-        
-        if (!session) {
-          navigate("/auth");
-          return;
-        }
-
-        setUser(session.user);
-
         // Check if user has any role
         const { data: existingRoles, error: roleCheckError } = await supabase
           .from("user_roles")
           .select("role")
-          .eq("user_id", session.user.id);
+          .eq("user_id", userId);
 
         // If no role exists, create default user role
         if (!roleCheckError && (!existingRoles || existingRoles.length === 0)) {
           await supabase
             .from("user_roles")
-            .insert({ user_id: session.user.id, role: "user" });
+            .insert({ user_id: userId, role: "user" });
         }
 
         // Check if user is admin
         const { data: adminRole } = await supabase
           .from("user_roles")
           .select("role")
-          .eq("user_id", session.user.id)
+          .eq("user_id", userId)
           .eq("role", "admin")
           .maybeSingle();
 
         setIsAdmin(!!adminRole);
       } catch (error) {
-        console.error("Error checking auth:", error);
-      } finally {
-        setLoading(false);
+        console.error("Error checking roles:", error);
       }
     };
 
-    checkAuth();
+    const initAuth = async () => {
+      try {
+        setLoading(true);
+        const { data: { session } } = await supabase.auth.getSession();
 
-    // Listen for auth changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
         if (!session) {
           navigate("/auth");
           return;
         }
 
         setUser(session.user);
-
-        // Check admin role
-        const { data: roles } = await supabase
-          .from("user_roles")
-          .select("role")
-          .eq("user_id", session.user.id)
-          .eq("role", "admin")
-          .maybeSingle();
-
-        setIsAdmin(!!roles);
+        await refreshRole(session.user.id);
+      } catch (error) {
+        console.error("Error initializing dashboard auth:", error);
+      } finally {
+        setLoading(false);
       }
-    );
+    };
 
-    return () => subscription.unsubscribe();
+    // Listen for auth changes with a synchronous callback
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      if (!session) {
+        setUser(null);
+        navigate("/auth");
+        return;
+      }
+
+      setUser(session.user);
+
+      // Defer role checks outside of the auth callback to avoid deadlocks
+      setTimeout(() => {
+        refreshRole(session.user!.id);
+      }, 0);
+    });
+
+    initAuth();
+
+    return () => {
+      subscription.unsubscribe();
+    };
   }, [navigate]);
 
   if (loading) {
