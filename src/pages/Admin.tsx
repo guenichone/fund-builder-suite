@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import FundsList from "@/components/funds/FundsList";
 import CreateFundForm from "@/components/funds/CreateFundForm";
 import { Plus } from "lucide-react";
@@ -46,25 +45,7 @@ const AdminPage = () => {
         </Dialog>
       </div>
 
-      <Tabs defaultValue="all" className="w-full">
-        <TabsList>
-          <TabsTrigger value="all">All Funds</TabsTrigger>
-          <TabsTrigger value="active">Active</TabsTrigger>
-          <TabsTrigger value="inactive">Inactive</TabsTrigger>
-        </TabsList>
-
-        <TabsContent value="all" className="mt-6">
-          <FundsList filter="all" isAdmin={true} />
-        </TabsContent>
-
-        <TabsContent value="active" className="mt-6">
-          <FundsList filter="active" isAdmin={true} />
-        </TabsContent>
-
-        <TabsContent value="inactive" className="mt-6">
-          <FundsList filter="inactive" isAdmin={true} />
-        </TabsContent>
-      </Tabs>
+      <FundsList filter="all" isAdmin={true} />
     </div>
   );
 };
