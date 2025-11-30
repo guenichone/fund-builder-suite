@@ -93,9 +93,17 @@ const DashboardWrapper = () => {
   }
 
   const userName = user.user_metadata?.full_name || user.email?.split("@")[0];
+  
+  const getPageTitle = () => {
+    const path = window.location.pathname;
+    if (path.includes('/portfolio')) return 'My Portfolio';
+    if (path.includes('/funds')) return 'Available Funds';
+    if (path.includes('/dashboard')) return 'Fund Management';
+    return 'Dashboard';
+  };
 
   return (
-    <DashboardLayout userName={userName} role={role} userId={user.id}>
+    <DashboardLayout userName={userName} role={role} userId={user.id} pageTitle={getPageTitle()}>
       <Outlet />
     </DashboardLayout>
   );

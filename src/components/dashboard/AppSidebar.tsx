@@ -21,7 +21,6 @@ export function AppSidebar({ role }: AppSidebarProps) {
   const { open } = useSidebar();
 
   const adminItems = [
-    { title: "Dashboard", url: "/dashboard", icon: LayoutDashboard },
     { title: "Manage Funds", url: "/dashboard", icon: Briefcase },
   ];
 
