@@ -72,7 +72,6 @@ const SellSharesDialog = ({ investmentId, fundName, sharesOwned, redemptionPrice
       setOpen(false);
       onSuccess();
     } catch (error: any) {
-      console.error("Sell shares error:", error);
       toast({
         title: "Error",
         description: error.message,

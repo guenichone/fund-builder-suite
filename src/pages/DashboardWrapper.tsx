@@ -54,8 +54,6 @@ const DashboardWrapper = () => {
             navigate("/portfolio");
           }
         }
-      } catch (error) {
-        console.error("Error initializing auth:", error);
       } finally {
         setLoading(false);
       }

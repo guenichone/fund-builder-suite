@@ -44,7 +44,6 @@ const InvestmentDialog = ({ fundId, fundName, sharePrice, userId }: InvestmentDi
       });
 
       if (error) {
-        console.error("Investment error:", error);
         throw error;
       }
 
@@ -56,7 +55,6 @@ const InvestmentDialog = ({ fundId, fundName, sharePrice, userId }: InvestmentDi
       setOpen(false);
       setAmount("");
     } catch (error: any) {
-      console.error("Investment failed:", error);
       toast({
         title: "Investment failed",
         description: error.message || "An error occurred while processing your investment.",
