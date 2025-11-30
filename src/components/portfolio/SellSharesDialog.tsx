@@ -91,7 +91,7 @@ const SellSharesDialog = ({ investmentId, fundName, sharesOwned, redemptionPrice
       <DialogTrigger asChild>
         <Button variant="outline" className="w-full gap-2">
           <ArrowDownCircle className="w-4 h-4" />
-          Sell Shares
+          Sell
         </Button>
       </DialogTrigger>
       <DialogContent>
