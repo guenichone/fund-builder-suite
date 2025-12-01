@@ -8,11 +8,23 @@ const Index = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Check if user is already logged in
+    // Check if user is already logged in and redirect based on role
     const checkAuth = async () => {
       const { data: { session } } = await supabase.auth.getSession();
       if (session) {
-        navigate("/dashboard");
+        // Fetch user role to determine redirect
+        const { data } = await supabase
+          .from("user_roles")
+          .select("role")
+          .eq("user_id", session.user.id)
+          .maybeSingle();
+
+        const userRole = data?.role || "user";
+        if (userRole === "admin") {
+          navigate("/dashboard");
+        } else {
+          navigate("/portfolio");
+        }
       }
     };
     checkAuth();
