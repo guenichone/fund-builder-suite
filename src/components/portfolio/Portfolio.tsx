@@ -59,7 +59,10 @@ const Portfolio = ({ userId }: PortfolioProps) => {
 
       const invested = typedData.reduce((sum, inv) => sum + Number(inv.total_amount), 0);
       const current = typedData.reduce(
-        (sum, inv) => sum + Number(inv.shares_quantity) * Number(inv.fund.share_price),
+        (sum, inv) => {
+          const effectivePrice = inv.fund.redemption_price ?? inv.fund.share_price;
+          return sum + Number(inv.shares_quantity) * Number(effectivePrice);
+        },
         0
       );
 
@@ -166,7 +169,8 @@ const Portfolio = ({ userId }: PortfolioProps) => {
         <CardContent>
           <div className="space-y-4">
             {investments.map((investment) => {
-              const currentValue = Number(investment.shares_quantity) * Number(investment.fund.share_price);
+              const effectivePrice = investment.fund.redemption_price ?? investment.fund.share_price;
+              const currentValue = Number(investment.shares_quantity) * Number(effectivePrice);
               const invested = Number(investment.total_amount);
               const profit = currentValue - invested;
 

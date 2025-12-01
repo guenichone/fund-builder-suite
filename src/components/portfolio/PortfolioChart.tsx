@@ -5,6 +5,7 @@ interface Investment {
   fund: {
     name: string;
     share_price: number;
+    redemption_price: number | null;
   };
 }
 
@@ -15,7 +16,8 @@ interface PortfolioChartProps {
 const PortfolioChart = ({ investments }: PortfolioChartProps) => {
   const fundValues = investments.reduce((acc, inv) => {
     const fundName = inv.fund.name;
-    const value = Number(inv.shares_quantity) * Number(inv.fund.share_price);
+    const effectivePrice = inv.fund.redemption_price ?? inv.fund.share_price;
+    const value = Number(inv.shares_quantity) * Number(effectivePrice);
     
     if (acc[fundName]) {
       acc[fundName] += value;
