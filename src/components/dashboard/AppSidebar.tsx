@@ -1,6 +1,5 @@
-import { LayoutDashboard, Briefcase, PieChart, TrendingUp, Bug, AlertCircle } from "lucide-react";
+import { LayoutDashboard, Briefcase, PieChart, TrendingUp } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
-import { useToast } from "@/hooks/use-toast";
 
 import {
   Sidebar,
@@ -20,7 +19,6 @@ interface AppSidebarProps {
 
 export function AppSidebar({ role }: AppSidebarProps) {
   const { open } = useSidebar();
-  const { toast } = useToast();
 
   const adminItems = [
     { title: "Manage Funds", url: "/dashboard", icon: Briefcase },
@@ -32,19 +30,6 @@ export function AppSidebar({ role }: AppSidebarProps) {
   ];
 
   const items = role === "admin" ? adminItems : userItems;
-
-  const handleDebugError = () => {
-    console.error("🐛 Debug Error: This is a simulated console error for testing purposes");
-  };
-
-  const handleSimulateHttpError = () => {
-    console.error("❌ HTTP Error: Simulated failed API call - 500 Internal Server Error");
-    toast({
-      title: "API Request Failed",
-      description: "Simulated HTTP 500 error - Internal Server Error",
-      variant: "destructive",
-    });
-  };
 
   return (
     <Sidebar collapsible="icon">
@@ -83,28 +68,6 @@ export function AppSidebar({ role }: AppSidebarProps) {
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
-
-        <SidebarGroup>
-          <SidebarGroupLabel className="text-sidebar-foreground/70">
-            {open ? "Debug" : ""}
-          </SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              <SidebarMenuItem>
-                <SidebarMenuButton onClick={handleDebugError} className="hover:bg-sidebar-accent">
-                  <Bug className="h-5 w-5" />
-                  {open && <span>Console Error</span>}
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-              <SidebarMenuItem>
-                <SidebarMenuButton onClick={handleSimulateHttpError} className="hover:bg-sidebar-accent">
-                  <AlertCircle className="h-5 w-5" />
-                  {open && <span>HTTP Error</span>}
-                </SidebarMenuButton>
-              </SidebarMenuItem>
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
