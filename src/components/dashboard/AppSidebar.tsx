@@ -1,4 +1,4 @@
-import { LayoutDashboard, Briefcase, PieChart, TrendingUp } from "lucide-react";
+import { LayoutDashboard, Briefcase, PieChart, TrendingUp, Bug } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 
 import {
@@ -30,6 +30,10 @@ export function AppSidebar({ role }: AppSidebarProps) {
   ];
 
   const items = role === "admin" ? adminItems : userItems;
+
+  const handleDebugError = () => {
+    console.error("🐛 Debug Error: This is a simulated console error for testing purposes");
+  };
 
   return (
     <Sidebar collapsible="icon">
@@ -68,6 +72,22 @@ export function AppSidebar({ role }: AppSidebarProps) {
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+
+        <SidebarGroup>
+          <SidebarGroupLabel className="text-sidebar-foreground/70">
+            {open ? "Debug" : ""}
+          </SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              <SidebarMenuItem>
+                <SidebarMenuButton onClick={handleDebugError} className="hover:bg-sidebar-accent">
+                  <Bug className="h-5 w-5" />
+                  {open && <span>Simulate Error</span>}
+                </SidebarMenuButton>
+              </SidebarMenuItem>
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
