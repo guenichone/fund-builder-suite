@@ -38,21 +38,29 @@ const DashboardWrapper = () => {
         }
 
         setUser(session.user);
-        await fetchUserRole(session.user.id);
+        const { data } = await supabase
+          .from("user_roles")
+          .select("role")
+          .eq("user_id", session.user.id)
+          .maybeSingle();
         
-        // Redirect based on role
-        if (window.location.pathname === "/") {
-          const { data } = await supabase
-            .from("user_roles")
-            .select("role")
-            .eq("user_id", session.user.id)
-            .maybeSingle();
-          
-          if (data?.role === "admin") {
+        const userRole = data?.role as "admin" | "user" || "user";
+        setRole(userRole);
+        
+        // Redirect based on role and current path
+        const currentPath = window.location.pathname;
+        if (currentPath === "/" || currentPath === "") {
+          if (userRole === "admin") {
             navigate("/dashboard");
           } else {
             navigate("/portfolio");
           }
+        } else if (userRole === "admin" && (currentPath === "/portfolio" || currentPath === "/funds")) {
+          // Admin shouldn't be on user pages
+          navigate("/dashboard");
+        } else if (userRole === "user" && currentPath === "/dashboard") {
+          // User shouldn't be on admin page
+          navigate("/portfolio");
         }
       } finally {
         setLoading(false);
