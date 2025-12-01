@@ -54,10 +54,10 @@ const InvestmentDialog = ({ fundId, fundName, sharePrice, userId }: InvestmentDi
 
       setOpen(false);
       setAmount("");
-    } catch (error: any) {
+    } catch (error) {
       toast({
         title: "Investment failed",
-        description: error.message || "An error occurred while processing your investment.",
+        description: error instanceof Error ? error.message : "An error occurred while processing your investment.",
         variant: "destructive",
       });
     } finally {

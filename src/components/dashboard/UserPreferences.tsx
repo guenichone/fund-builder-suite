@@ -44,10 +44,10 @@ const UserPreferences = ({ userId, currentRole, onRoleChange }: UserPreferencesP
 
       // Reload page to update dashboard
       window.location.reload();
-    } catch (error: any) {
+    } catch (error) {
       toast({
         title: "Error updating role",
-        description: error.message,
+        description: error instanceof Error ? error.message : "An error occurred",
         variant: "destructive",
       });
     } finally {

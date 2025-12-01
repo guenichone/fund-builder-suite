@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -43,7 +43,7 @@ const FundsList = ({ filter, isAdmin, userId, userInvestments = [], onInvestment
   const [togglingFund, setTogglingFund] = useState<string | null>(null);
   const { toast } = useToast();
 
-  const loadFunds = async () => {
+  const loadFunds = useCallback(async () => {
     setLoading(true);
     try {
       let query = supabase.from("funds").select("*").order("created_at", { ascending: false });
@@ -58,20 +58,20 @@ const FundsList = ({ filter, isAdmin, userId, userInvestments = [], onInvestment
 
       if (error) throw error;
       setFunds(data || []);
-    } catch (error: any) {
+    } catch (error) {
       toast({
         title: "Error loading funds",
-        description: error.message,
+        description: error instanceof Error ? error.message : "An error occurred",
         variant: "destructive",
       });
     } finally {
       setLoading(false);
     }
-  };
+  }, [filter, toast]);
 
   useEffect(() => {
     loadFunds();
-  }, [filter]);
+  }, [loadFunds]);
 
   const handleToggleActive = async (fundId: string, currentStatus: boolean) => {
     setTogglingFund(fundId);
@@ -87,12 +87,12 @@ const FundsList = ({ filter, isAdmin, userId, userInvestments = [], onInvestment
         title: "Success",
         description: `Fund ${!currentStatus ? "activated" : "deactivated"} successfully.`,
       });
-      
+
       loadFunds();
-    } catch (error: any) {
+    } catch (error) {
       toast({
         title: "Error",
-        description: error.message,
+        description: error instanceof Error ? error.message : "An error occurred",
         variant: "destructive",
       });
     } finally {

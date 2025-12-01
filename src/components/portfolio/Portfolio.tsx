@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Loader2, TrendingUp, PieChart, BarChart3 } from "lucide-react";
@@ -30,11 +30,7 @@ const Portfolio = ({ userId }: PortfolioProps) => {
   const [totalValue, setTotalValue] = useState(0);
   const [totalInvested, setTotalInvested] = useState(0);
 
-  useEffect(() => {
-    loadPortfolio();
-  }, [userId]);
-
-  const loadPortfolio = async () => {
+  const loadPortfolio = useCallback(async () => {
     setLoading(true);
     try {
       const { data, error } = await supabase
@@ -69,16 +65,20 @@ const Portfolio = ({ userId }: PortfolioProps) => {
 
       setTotalInvested(invested);
       setTotalValue(current);
-    } catch (error: any) {
+    } catch (error) {
       toast({
         title: "Error loading portfolio",
-        description: error.message,
+        description: error instanceof Error ? error.message : "An error occurred",
         variant: "destructive",
       });
     } finally {
       setLoading(false);
     }
-  };
+  }, [userId, toast]);
+
+  useEffect(() => {
+    loadPortfolio();
+  }, [loadPortfolio]);
 
   if (loading) {
     return (

@@ -57,10 +57,10 @@ const EditFundDialog = ({ fund, onUpdate }: EditFundDialogProps) => {
         description: `Fund ${!isActive ? "activated" : "deactivated"} successfully.`,
       });
       onUpdate();
-    } catch (error: any) {
+    } catch (error) {
       toast({
         title: "Error",
-        description: error.message,
+        description: error instanceof Error ? error.message : "An error occurred",
         variant: "destructive",
       });
     } finally {
@@ -88,10 +88,10 @@ const EditFundDialog = ({ fund, onUpdate }: EditFundDialogProps) => {
         description: "Redemption price updated successfully.",
       });
       onUpdate();
-    } catch (error: any) {
+    } catch (error) {
       toast({
         title: "Error",
-        description: error.message,
+        description: error instanceof Error ? error.message : "An error occurred",
         variant: "destructive",
       });
     } finally {
@@ -112,10 +112,10 @@ const EditFundDialog = ({ fund, onUpdate }: EditFundDialogProps) => {
       });
       setOpen(false);
       onUpdate();
-    } catch (error: any) {
+    } catch (error) {
       toast({
         title: "Error",
-        description: error.message,
+        description: error instanceof Error ? error.message : "An error occurred",
         variant: "destructive",
       });
     } finally {
