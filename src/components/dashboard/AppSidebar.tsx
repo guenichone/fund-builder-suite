@@ -34,16 +34,18 @@ export function AppSidebar({ role }: AppSidebarProps) {
   const items = role === "admin" ? adminItems : userItems;
 
   const handleDebugError = () => {
-    console.error("🐛 Debug Error: This is a simulated console error for testing purposes");
+    throw new Error("🐛 Debug Error: This is a simulated console error for testing purposes");
   };
 
   const handleSimulateHttpError = () => {
-    console.error("❌ HTTP Error: Simulated failed API call - 500 Internal Server Error");
-    toast({
-      title: "API Request Failed",
-      description: "Simulated HTTP 500 error - Internal Server Error",
-      variant: "destructive",
-    });
+    const error = new Error("HTTP 500: Internal Server Error") as Error & {
+      status: number;
+      statusText: string;
+    };
+    error.name = "HTTPError";
+    error.status = 500;
+    error.statusText = "Internal Server Error";
+    throw error;
   };
 
   return (
