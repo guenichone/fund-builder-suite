@@ -1,4 +1,4 @@
-import { LayoutDashboard, Briefcase, PieChart, TrendingUp, Bug, AlertCircle } from "lucide-react";
+import { Briefcase, PieChart, TrendingUp, Bug, AlertCircle } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import { useToast } from "@/hooks/use-toast";
 
@@ -34,10 +34,12 @@ export function AppSidebar({ role }: AppSidebarProps) {
   const items = role === "admin" ? adminItems : userItems;
 
   const handleDebugError = () => {
+    // Throws an uncaught exception - Sentry's global handler will capture it
     throw new Error("🐛 Debug Error: This is a simulated console error for testing purposes");
   };
 
   const handleSimulateHttpError = () => {
+    // Simulate HTTP error with additional context
     const error = new Error("HTTP 500: Internal Server Error") as Error & {
       status: number;
       statusText: string;
@@ -74,9 +76,9 @@ export function AppSidebar({ role }: AppSidebarProps) {
               {items.map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton asChild className="hover:bg-sidebar-accent">
-                    <NavLink 
-                      to={item.url} 
-                      end 
+                    <NavLink
+                      to={item.url}
+                      end
                       activeClassName="bg-sidebar-accent text-sidebar-primary"
                     >
                       <item.icon className="h-5 w-5" />
