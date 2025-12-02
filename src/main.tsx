@@ -1,5 +1,15 @@
 import { createRoot } from "react-dom/client";
+import * as Sentry from "@sentry/react";
 import App from "./App.tsx";
 import "./index.css";
 
-createRoot(document.getElementById("root")!).render(<App />);
+Sentry.init({
+  dsn: "https://ac6c00af0e51dc8e9563b5069ff4b69d@o4510458792902656.ingest.de.sentry.io/4510458835435600",
+  // Setting this option to true will send default PII data to Sentry.
+  // For example, automatic IP address collection on events
+  sendDefaultPii: true
+});
+
+const container = document.getElementById("root")!;
+const root = createRoot(container);
+root.render(<App />);
