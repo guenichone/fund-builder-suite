@@ -34,6 +34,9 @@ npm i
 
 # Step 4: Start the development server with auto-reloading and an instant preview.
 npm run dev
+
+# Step 5: Run the test suite to ensure everything is healthy.
+npm run test
 ```
 
 **Edit a file directly in GitHub**
@@ -59,6 +62,11 @@ This project is built with:
 - React
 - shadcn-ui
 - Tailwind CSS
+
+## Testing & linting
+
+- `npm run test` – executes the Vitest unit test suite.
+- `npm run lint` – runs ESLint across the project.
 
 ## How can I deploy this project?
 

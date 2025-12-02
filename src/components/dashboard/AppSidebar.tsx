@@ -1,6 +1,7 @@
 import { Briefcase, PieChart, TrendingUp, Bug, AlertCircle } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import { useToast } from "@/hooks/use-toast";
+import { executeDebugAction } from "@/lib/debug-actions";
 
 import {
   Sidebar,
@@ -33,22 +34,32 @@ export function AppSidebar({ role }: AppSidebarProps) {
 
   const items = role === "admin" ? adminItems : userItems;
 
-  const handleDebugError = () => {
-    // Throws an uncaught exception - Sentry's global handler will capture it
-    throw new Error("🐛 Debug Error: This is a simulated console error for testing purposes");
-  };
+  const notifyDebugDisabled = (label: string) =>
+    toast({
+      title: "Debug action disabled",
+      description: `${label} is only available while running the app locally.`,
+      variant: "destructive",
+    });
 
-  const handleSimulateHttpError = () => {
-    // Simulate HTTP error with additional context
-    const error = new Error("HTTP 500: Internal Server Error") as Error & {
-      status: number;
-      statusText: string;
-    };
-    error.name = "HTTPError";
-    error.status = 500;
-    error.statusText = "Internal Server Error";
-    throw error;
-  };
+  const handleDebugError = () =>
+    executeDebugAction(
+      () => {
+        throw new Error("🐛 Debug Error: This is a simulated console error for testing purposes");
+      },
+      { onDisabled: () => notifyDebugDisabled("Console Error") },
+    );
+
+  const handleSimulateHttpError = () =>
+    executeDebugAction(() => {
+      const error = new Error("HTTP 500: Internal Server Error") as Error & {
+        status: number;
+        statusText: string;
+      };
+      error.name = "HTTPError";
+      error.status = 500;
+      error.statusText = "Internal Server Error";
+      throw error;
+    }, { onDisabled: () => notifyDebugDisabled("HTTP Error") });
 
   return (
     <Sidebar collapsible="icon">
