@@ -8,6 +8,7 @@ import Auth from "./pages/Auth";
 import DashboardWrapper from "./pages/DashboardWrapper";
 import Portfolio from "./pages/Portfolio";
 import Funds from "./pages/Funds";
+import Wallet from "./pages/Wallet";
 import Admin from "./pages/Admin";
 import NotFound from "./pages/NotFound";
 
@@ -25,6 +26,7 @@ const App = () => (
           <Route path="/*" element={<DashboardWrapper />}>
             <Route path="portfolio" element={<Portfolio />} />
             <Route path="funds" element={<Funds />} />
+            <Route path="wallet" element={<Wallet />} />
             <Route path="dashboard" element={<Admin />} />
           </Route>
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}

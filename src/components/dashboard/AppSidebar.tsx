@@ -1,4 +1,4 @@
-import { Briefcase, PieChart, TrendingUp, Bug, AlertCircle } from "lucide-react";
+import { Briefcase, PieChart, TrendingUp, Bug, AlertCircle, Wallet } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import { useToast } from "@/hooks/use-toast";
 
@@ -29,6 +29,7 @@ export function AppSidebar({ role }: AppSidebarProps) {
   const userItems = [
     { title: "My Portfolio", url: "/portfolio", icon: PieChart },
     { title: "Available Funds", url: "/funds", icon: TrendingUp },
+    { title: "My Wallet", url: "/wallet", icon: Wallet },
   ];
 
   const items = role === "admin" ? adminItems : userItems;
