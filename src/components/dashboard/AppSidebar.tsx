@@ -29,7 +29,7 @@ export function AppSidebar({ role }: AppSidebarProps) {
   const userItems = [
     { title: "My Portfolio", url: "/portfolio", icon: PieChart },
     { title: "Available Funds", url: "/funds", icon: TrendingUp },
-    { title: "My Wallet", url: "/wallet", icon: Wallet },
+    { title: "My Wallets", url: "/wallet", icon: Wallet },
   ];
 
   const items = role === "admin" ? adminItems : userItems;
