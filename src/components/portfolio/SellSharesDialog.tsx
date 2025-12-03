@@ -6,17 +6,18 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
 import { useToast } from "@/hooks/use-toast";
-import { ArrowDownCircle, Loader2 } from "lucide-react";
+import { ArrowDownCircle, Loader2, Wallet } from "lucide-react";
 
 interface SellSharesDialogProps {
   investmentId: string;
   fundName: string;
   sharesOwned: number;
   redemptionPrice: number;
+  userId: string;
   onSuccess: () => void;
 }
 
-const SellSharesDialog = ({ investmentId, fundName, sharesOwned, redemptionPrice, onSuccess }: SellSharesDialogProps) => {
+const SellSharesDialog = ({ investmentId, fundName, sharesOwned, redemptionPrice, userId, onSuccess }: SellSharesDialogProps) => {
   const { toast } = useToast();
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -33,6 +34,8 @@ const SellSharesDialog = ({ investmentId, fundName, sharesOwned, redemptionPrice
     }
 
     setLoading(true);
+    const saleAmount = sharesToSell * redemptionPrice;
+
     try {
       const { data: investment, error: fetchError } = await supabase
         .from("investments")
@@ -48,6 +51,7 @@ const SellSharesDialog = ({ investmentId, fundName, sharesOwned, redemptionPrice
         throw new Error("Cannot sell more shares than you own");
       }
 
+      // Update or delete investment
       if (remainingShares === 0) {
         const { error: deleteError } = await supabase
           .from("investments")
@@ -64,9 +68,46 @@ const SellSharesDialog = ({ investmentId, fundName, sharesOwned, redemptionPrice
         if (updateError) throw updateError;
       }
 
+      // Credit wallet
+      const { data: wallet, error: walletFetchError } = await supabase
+        .from("user_wallets")
+        .select("balance")
+        .eq("user_id", userId)
+        .maybeSingle();
+
+      if (walletFetchError) throw walletFetchError;
+
+      const currentBalance = wallet ? Number(wallet.balance) : 0;
+      const newBalance = currentBalance + saleAmount;
+
+      if (wallet) {
+        const { error: walletUpdateError } = await supabase
+          .from("user_wallets")
+          .update({ balance: newBalance })
+          .eq("user_id", userId);
+
+        if (walletUpdateError) throw walletUpdateError;
+      } else {
+        // Create wallet if it doesn't exist
+        const { error: walletCreateError } = await supabase
+          .from("user_wallets")
+          .insert({ user_id: userId, balance: saleAmount });
+
+        if (walletCreateError) throw walletCreateError;
+      }
+
+      // Record transaction
+      await supabase.from("wallet_transactions").insert({
+        user_id: userId,
+        type: "sale",
+        amount: saleAmount,
+        description: `Sale: ${fundName}`,
+        reference_id: investmentId,
+      });
+
       toast({
         title: "Success!",
-        description: `Sold ${sharesToSell.toFixed(4)} shares for $${(sharesToSell * redemptionPrice).toFixed(2)}`,
+        description: `Sold ${sharesToSell.toFixed(4)} shares for $${saleAmount.toFixed(2)}. Funds added to wallet.`,
       });
 
       setOpen(false);
@@ -141,6 +182,10 @@ const SellSharesDialog = ({ investmentId, fundName, sharesOwned, redemptionPrice
             <div className="flex justify-between pt-2 border-t">
               <span className="font-semibold">Total Value</span>
               <span className="text-xl font-bold text-primary">${totalValue.toFixed(2)}</span>
+            </div>
+            <div className="flex items-center gap-2 pt-2 text-sm text-muted-foreground">
+              <Wallet className="w-4 h-4" />
+              <span>Funds will be credited to your wallet</span>
             </div>
           </div>
 

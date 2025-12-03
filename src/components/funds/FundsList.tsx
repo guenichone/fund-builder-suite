@@ -209,7 +209,13 @@ const FundsList = ({ filter, isAdmin, userId, userInvestments = [], onInvestment
                 return (
                   <div className="flex gap-2">
                     <div className="flex-1">
-                      <InvestmentDialog fundId={fund.id} fundName={fund.name} sharePrice={fund.share_price} userId={userId} />
+                      <InvestmentDialog 
+                        fundId={fund.id} 
+                        fundName={fund.name} 
+                        sharePrice={fund.share_price} 
+                        userId={userId}
+                        onInvestmentChange={onInvestmentChange}
+                      />
                     </div>
                     {hasShares && fund.redemption_price && (
                       <div className="flex-1">
@@ -218,6 +224,7 @@ const FundsList = ({ filter, isAdmin, userId, userInvestments = [], onInvestment
                           fundName={fund.name}
                           sharesOwned={userInvestment.total_shares}
                           redemptionPrice={fund.redemption_price}
+                          userId={userId}
                           onSuccess={() => {
                             if (onInvestmentChange) onInvestmentChange();
                           }}
