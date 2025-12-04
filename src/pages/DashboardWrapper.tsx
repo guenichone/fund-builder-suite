@@ -104,6 +104,7 @@ const DashboardWrapper = () => {
     const path = window.location.pathname;
     if (path.includes('/portfolio')) return 'My Portfolio';
     if (path.includes('/funds')) return 'Available Funds';
+    if (path.includes('/wallet')) return 'My Wallet';
     if (path.includes('/dashboard')) return 'Fund Management';
     return 'Dashboard';
   };
