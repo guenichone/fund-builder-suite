@@ -60,6 +60,10 @@ This project is built with:
 - shadcn-ui
 - Tailwind CSS
 
+## Debug tools
+
+The dashboard includes developer-only debug controls (Console Error / HTTP Error buttons) that intentionally throw errors for observability testing. These controls are shown automatically in development builds. To surface them in another environment, set the environment variable `VITE_ENABLE_DEBUG_TOOLS=true` before running `npm run dev` or `npm run build`.
+
 ## How can I deploy this project?
 
 Simply open [Lovable](https://lovable.dev/projects/f8c661d9-f223-4411-8e93-9d8d50368f6c) and click on Share -> Publish.
