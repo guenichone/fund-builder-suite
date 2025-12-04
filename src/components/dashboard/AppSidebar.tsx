@@ -1,6 +1,6 @@
 import { Briefcase, PieChart, TrendingUp, Bug, AlertCircle, Wallet } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
-import { useToast } from "@/hooks/use-toast";
+import { isDebugToolsEnabled } from "@/lib/debug";
 
 import {
   Sidebar,
@@ -20,7 +20,7 @@ interface AppSidebarProps {
 
 export function AppSidebar({ role }: AppSidebarProps) {
   const { open } = useSidebar();
-  const { toast } = useToast();
+  const showDebugTools = isDebugToolsEnabled();
 
   const adminItems = [
     { title: "Manage Funds", url: "/dashboard", icon: Briefcase },
@@ -92,27 +92,29 @@ export function AppSidebar({ role }: AppSidebarProps) {
           </SidebarGroupContent>
         </SidebarGroup>
 
-        <SidebarGroup>
-          <SidebarGroupLabel className="text-sidebar-foreground/70">
-            {open ? "Debug" : ""}
-          </SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              <SidebarMenuItem>
-                <SidebarMenuButton onClick={handleDebugError} className="hover:bg-sidebar-accent">
-                  <Bug className="h-5 w-5" />
-                  {open && <span>Console Error</span>}
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-              <SidebarMenuItem>
-                <SidebarMenuButton onClick={handleSimulateHttpError} className="hover:bg-sidebar-accent">
-                  <AlertCircle className="h-5 w-5" />
-                  {open && <span>HTTP Error</span>}
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
+        {showDebugTools && (
+          <SidebarGroup>
+            <SidebarGroupLabel className="text-sidebar-foreground/70">
+              {open ? "Debug" : ""}
+            </SidebarGroupLabel>
+            <SidebarGroupContent>
+              <SidebarMenu>
+                <SidebarMenuItem>
+                  <SidebarMenuButton onClick={handleDebugError} className="hover:bg-sidebar-accent">
+                    <Bug className="h-5 w-5" />
+                    {open && <span>Console Error</span>}
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+                <SidebarMenuItem>
+                  <SidebarMenuButton onClick={handleSimulateHttpError} className="hover:bg-sidebar-accent">
+                    <AlertCircle className="h-5 w-5" />
+                    {open && <span>HTTP Error</span>}
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </SidebarGroup>
+        )}
       </SidebarContent>
     </Sidebar>
   );
